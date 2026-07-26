@@ -1,5 +1,5 @@
 # Stage 1: Install production dependencies
-FROM node:22-alpine AS builder
+FROM node:current-alpine3.24 AS builder
 
 WORKDIR /app
 
