@@ -1,15 +1,16 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 
-# Update Alpine packages to patched security versions
 RUN apk update && apk upgrade
 
 COPY package*.json ./
 
 RUN npm ci --omit=dev
 
-COPY . .
+COPY server.js ./
+
+USER node
 
 EXPOSE 4000
 
