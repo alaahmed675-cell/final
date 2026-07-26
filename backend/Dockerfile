@@ -8,24 +8,21 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 
 
-# Stage 2: Production runtime
-FROM node:22-alpine
+# Stage 2: Minimal production runtime
+FROM gcr.io/distroless/nodejs22-debian12
 
 WORKDIR /app
 
-# Update Alpine security packages
-RUN apk update && apk upgrade
-
-# Copy only production dependencies
+# Copy production dependencies
 COPY --from=builder /app/node_modules ./node_modules
 
-# Copy application
+# Copy application files
 COPY package*.json ./
 COPY server.js ./
 
 # Run as non-root user
-USER node
+USER nonroot
 
 EXPOSE 4000
 
-CMD ["node", "server.js"]
+CMD ["server.js"]
