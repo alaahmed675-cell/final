@@ -8,13 +8,10 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 
 
-# Stage 2: Production runtime
-FROM node:22-alpine
+# Stage 2: Minimal production runtime
+FROM gcr.io/distroless/nodejs22-debian12
 
 WORKDIR /app
-
-# Update Alpine packages
-RUN apk update && apk upgrade
 
 # Copy production dependencies
 COPY --from=builder /app/node_modules ./node_modules
@@ -22,10 +19,11 @@ COPY --from=builder /app/node_modules ./node_modules
 # Copy package files
 COPY package*.json ./
 
-# Copy application files
-COPY . .
+# Copy application
+COPY server.js ./
 
-# Your Node.js app listens on port 4000
+# Application port
 EXPOSE 4000
 
-CMD ["npm", "start"]
+# Start application directly with Node.js
+CMD ["server.js"]
